@@ -22,6 +22,7 @@
 
 
 #include "mpixmaphandle.h"
+#include "mthemedaemonprotocol.h"
 
 #include <QString>
 #include <QSharedPointer>
@@ -34,13 +35,13 @@
 #include <QColor>
 #include <QDebug>
 #include <QObject>
+#include <QPixmap>
 
 #ifdef HAVE_MEEGOGRAPHICSSYSTEM
 #include <sys/mman.h>
 #include <QtMeeGoGraphicsSystemHelper>
 #endif
 
-class QPixmap;
 class QFileInfo;
 class QFile;
 
@@ -291,15 +292,7 @@ private slots:
 class MImageDirectory
 {
 public:
-    /*!
-     * Defines whether directories should be traversed recursively.
-     */
-    enum RecursionMode {
-        Recursive,
-        NonRecursive
-    };
-
-    MImageDirectory(const QString &path, RecursionMode recursionMode);
+    MImageDirectory(const QString &path, M::RecursionMode recursionMode);
 
     ~MImageDirectory();
 

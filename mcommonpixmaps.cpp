@@ -19,7 +19,6 @@
 
 #include "mcommonpixmaps.h"
 #include "mthemedaemon.h"
-#include "mdebug.h"
 #include "mpixmaphandle.h"
 
 #include <QFile>
@@ -114,7 +113,7 @@ void MCommonPixmaps::load()
     }
     QFile file(cacheFilename());
     if (!file.open(QIODevice::ReadOnly)) {
-        mWarning("MCommonPixmaps") << "Could not load most used pixmaps from" << cacheFilename();
+        qWarning() << Q_FUNC_INFO << "Could not load most used pixmaps from" << cacheFilename();
         return;
     }
 
@@ -151,7 +150,7 @@ void MCommonPixmaps::save() const
 {
     QFile file(cacheFilename());
     if (!file.open(QIODevice::WriteOnly)) {
-        mWarning("MCommonPixmaps") << "Could not save most used pixmaps to" << cacheFilename();
+        qWarning() << Q_FUNC_INFO << "Could not save most used pixmaps to" << cacheFilename();
         return;
     }
 
@@ -185,7 +184,7 @@ void MCommonPixmaps::loadOne()
                 if (resource) {
                     resource->fetchPixmap(id.size);
                 } else {
-                    mWarning("MCommonPixmaps") << QString("Themedaemon could not find resource %1 while loading most used pixmaps. Removing from list.").arg(id.imageId);
+                    qWarning() << Q_FUNC_INFO << QString("Themedaemon could not find resource %1 while loading most used pixmaps. Removing from list.").arg(id.imageId);
                     requestCounts.remove(id);
                     mostUsedPixmaps.remove(id);
                 }

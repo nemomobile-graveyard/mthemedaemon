@@ -21,9 +21,7 @@
 #include <sys/socket.h>
 
 #include "mthemedaemonserver.h"
-#include <theme/mthemedaemonclient.h>
-#include <MDebug>
-#include <MNamespace>
+#include "mthemedaemonclient.h"
 
 #include <QLocalSocket>
 #include <QDir>
@@ -69,7 +67,11 @@ MThemeDaemonServer::MThemeDaemonServer(const QString &serverAddress) :
     snUsr1 = new QSocketNotifier(sigusr1Fd[1], QSocketNotifier::Read, this);
     connect(snUsr1, SIGNAL(activated(int)), this, SLOT(handleSigUsr1()));
 
-    QString filename = M_INSTALL_SYSCONFDIR "/meegotouch/themedaemonpriorities.conf";
+#ifdef Q_OS_UNIX
+    QString filename = "/etc/meegotouch/themedaemonpriorities.conf";
+#else
+#error "need porting"
+#endif
     loadPriorities(filename);
 
     // 1) make sure that gconf has some value for the current theme
@@ -108,7 +110,7 @@ MThemeDaemonServer::MThemeDaemonServer(const QString &serverAddress) :
     QLocalServer::removeServer(address);
     connect(&server, SIGNAL(newConnection()), SLOT(clientConnected()));
     if (!server.listen(address)) {
-        mWarning("MThemeDaemonServer") << "Failed to start socket server.";
+        qWarning() << Q_FUNC_INFO << "Failed to start socket server.";
     }
 }
 
@@ -193,7 +195,7 @@ void MThemeDaemonServer::clientDisconnected()
             // finalize the theme change now if the disconnected client was 
             //the last who had not replied to theme change request
             if( removed && clientsThatHaveNotYetAppliedThemeChange.isEmpty() ) {
-                mWarning("MThemeDaemonServer") << "Finalize theme change due to disconnection of last pending application.";
+                qWarning() << Q_FUNC_INFO << "Finalize theme change due to disconnection of last pending application.";
                 finalizeThemeChange();
             }
         }
@@ -320,7 +322,7 @@ void MThemeDaemonServer::clientDataAvailable()
         } break;
 
         default: {
-            mWarning("MThemeDaemonServer") << "unknown packet received:" << packet.type();
+            qWarning() << Q_FUNC_INFO << "unknown packet received:" << packet.type();
         } break;
         }
     }
@@ -338,12 +340,12 @@ void MThemeDaemonServer::themeChanged(bool forceReload)
 
     //if previous theme change is not finished yet we need wait it to complete before changing to new one
     if(!clientsThatHaveNotYetAppliedThemeChange.isEmpty()) {
-        mWarning("MThemeDaemonServer") << "Will not change theme while another theme change is still ongoing. Change requests still pending:" << clientsThatHaveNotYetAppliedThemeChange.size();
+        qWarning() << Q_FUNC_INFO << "Will not change theme while another theme change is still ongoing. Change requests still pending:" << clientsThatHaveNotYetAppliedThemeChange.size();
         QStringList list;
         for (int i = 0; i < clientsThatHaveNotYetAppliedThemeChange.size(); ++i) {
             list << clientsThatHaveNotYetAppliedThemeChange.at(i)->name();
         }        
-        mWarning("MThemeDaemonServer") << list;
+        qWarning() << Q_FUNC_INFO << list;
         delayedThemeChange = true;
         QTimer::singleShot(THEME_CHANGE_TIMEOUT, this, SLOT(themeChangeTimeout()));
         return;
@@ -351,7 +353,7 @@ void MThemeDaemonServer::themeChanged(bool forceReload)
 
     bool changeOk = daemon.activateTheme(currentTheme.value().toString(), currentLocale.value().toString(), registeredClients.values(), pixmapsToDeleteWhenThemeChangeHasCompleted, forceReload);
     if(!changeOk) {
-        mWarning("MThemeDaemonServer") << "Could not change theme to" << currentTheme.value().toString() << ". Falling back to default theme " << defaultTheme;
+        qWarning() << Q_FUNC_INFO << "Could not change theme to" << currentTheme.value().toString() << ". Falling back to default theme " << defaultTheme;
         if( daemon.currentTheme() == defaultTheme )
             return;
         changeOk = daemon.activateTheme(defaultTheme, currentLocale.value().toString(), registeredClients.values(), pixmapsToDeleteWhenThemeChangeHasCompleted);
@@ -388,16 +390,16 @@ void MThemeDaemonServer::themeChangeTimeout()
     //check if some applications have not yet replied to theme 
     //change request, output some info and clear the list
     if(!clientsThatHaveNotYetAppliedThemeChange.isEmpty()) {
-        mWarning("MThemeDaemonServer") << "Theme change timeout. Change requests still pending:" << clientsThatHaveNotYetAppliedThemeChange.size();
+        qWarning() << Q_FUNC_INFO << "Theme change timeout. Change requests still pending:" << clientsThatHaveNotYetAppliedThemeChange.size();
         QStringList list;
         for (int i = 0; i < clientsThatHaveNotYetAppliedThemeChange.size(); ++i) {
             list << clientsThatHaveNotYetAppliedThemeChange.at(i)->name();
         }        
-        mWarning("MThemeDaemonServer") << list;        
+        qWarning() << Q_FUNC_INFO << list;        
         clientsThatHaveNotYetAppliedThemeChange.clear();
     }
 
-    mWarning("MThemeDaemonServer") << "Finalize theme change due to timeout.";
+    qWarning() << Q_FUNC_INFO << "Finalize theme change due to timeout.";
     finalizeThemeChange();
 }
 
@@ -590,7 +592,7 @@ void MThemeDaemonServer::themeChangeApplied(MThemeDaemonClient *client, qint32 p
     Q_UNUSED(sequenceNumber);
 
     if(!clientsThatHaveNotYetAppliedThemeChange.removeOne(client)) {
-        mWarning("MThemeDaemonServer") << "Client" << client->name() << "has already sent theme change applied packet!";
+        qWarning() << Q_FUNC_INFO << "Client" << client->name() << "has already sent theme change applied packet!";
         return;
     }
 
@@ -611,7 +613,7 @@ void MThemeDaemonServer::ackMostUsedPixmaps(MThemeDaemonClient *client,
                                             quint64 sequenceNumber)
 {
     if(!clientsThatHaveNotYetUpdatedMostUsed[sequenceNumber].removeOne(client)) {
-        mWarning("MThemeDaemonServer") << "Client" << client->name() << "has already acked most used pixmaps packet!";
+        qWarning() << Q_FUNC_INFO << "Client" << client->name() << "has already acked most used pixmaps packet!";
         return;
     }
 
@@ -667,7 +669,7 @@ void MThemeDaemonServer::finalizeThemeChange()
 
         //if another theme change was already requested, start the change now
         if( delayedThemeChange ) {
-            mWarning("MThemeDaemonServer") << "Starting delayed theme change.";
+            qWarning() << Q_FUNC_INFO << "Starting delayed theme change.";
             delayedThemeChange = false;
             themeChanged();
         }

@@ -28,7 +28,6 @@
 #include <QColor>
 
 #include "mthemedaemonprotocol.h"
-#include "mnamespace.h"
 
 class QLocalSocket;
 class ImageResource;

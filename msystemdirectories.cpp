@@ -40,8 +40,8 @@ QString MSystemDirectories::cacheDirectory()
     if (cacheDir.isEmpty() || prefixChanged) {
         cacheDir = cacheDirPrefix;
 
-        // first check if we can write to CACHEDIR
-        cacheDir += CACHEDIR "/";
+        // first check if we can write to the cache dir
+        cacheDir += "/var/cache/meegotouch";
         QDir().mkpath(cacheDir);
         QFileInfo cacheDirInfo(cacheDir);
         if (!(cacheDirInfo.isWritable() && cacheDirInfo.isDir()))
@@ -51,7 +51,7 @@ QString MSystemDirectories::cacheDirectory()
             QDir().mkpath(cacheDir);
             cacheDirInfo.setFile(cacheDir);
             if (!cacheDirInfo.isWritable() && cacheDirInfo.isDir()) {
-                qCritical() << "No writable cache directory found. Make sure that either" << QString(CACHEDIR) << "or" << cacheDir << "are writable.";
+                qCritical() << "No writable cache directory found. Make sure that " << cacheDir << " is writable.";
                 _exit(EXIT_FAILURE);
             }
         }

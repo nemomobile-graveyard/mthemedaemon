@@ -48,7 +48,7 @@ HEADERS += \
            msystemdirectories.h \
            keypresswaiter.h
 
-linux {
+linux* {
     HEADERS += inotify.h \
                inotify.watch.h \
                fstreenode.h \

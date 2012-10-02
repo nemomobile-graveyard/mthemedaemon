@@ -30,6 +30,14 @@
 
 namespace M
 {
+    /*!
+     * Defines whether directories should be traversed recursively.
+     */
+    enum RecursionMode {
+        Recursive,
+        NonRecursive
+    };
+
     namespace MThemeDaemonProtocol
     {
 

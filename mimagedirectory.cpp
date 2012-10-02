@@ -41,8 +41,6 @@
 #include "mimagedirectory.h"
 #include "mthemedaemon.h"
 
-#include "mdebug.h"
-
 #include "mgraphicssystemhelper.h"
 
 #include <QDateTime>
@@ -326,7 +324,7 @@ QImage ImageResource::loadFromFsCache(const QSize& size, PixmapCacheEntry *cache
             cacheFile->close();
             return image;
         } else {
-            mWarning("ImageResource") << "Failed to load pixmap from cache" << cacheFileName;
+            qWarning() << Q_FUNC_INFO  << "Failed to load pixmap from cache" << cacheFileName;
         }
     }
 
@@ -355,7 +353,7 @@ bool ImageResource::saveToFsCache(QImage &image, const QSize& size, const QStrin
         //Maybe it failed because the directory doesn't exist
         QDir().mkpath(QFileInfo(cacheFileName).absolutePath());
         if (!cache.open(QFile::WriteOnly)) {
-            mWarning("ImageResource") <<
+            qWarning() << Q_FUNC_INFO  <<
                      "Wrong permissions for cache directory" <<
                      MThemeDaemon::systemThemeCacheDirectory() <<
                      ". Cache is disabled.";
@@ -393,7 +391,7 @@ bool ImageResource::saveToFsCache(QImage &image, const QSize& size, const QStrin
     const QString cacheMetaFileName = cacheFileName + QLatin1String(".meta");
     QFile meta(cacheMetaFileName);
     if (!meta.open(QFile::WriteOnly)) {
-        mWarning("ImageResource") <<
+        qWarning() << Q_FUNC_INFO  <<
                  "Wrong permissions for cache directory" <<
                  MThemeDaemon::systemThemeCacheDirectory() <<
                  ". Cache is disabled.";
@@ -505,7 +503,7 @@ QImage IconImageResource::createPixmap(const QSize &size)
         if (renderer.isValid()) {
             svgImageSize = renderer.defaultSize();
         } else if (svgImageSize.isNull()) {
-            mWarning("IconImageResource") << "    Invalid svg, size of the document is (0,0)";
+            qWarning() << Q_FUNC_INFO << "    Invalid SVG, size of the document is (0,0)";
         }
     }
 
@@ -534,7 +532,7 @@ QImage SvgImageResource::createPixmap(const QSize &size)
         if (renderer.isValid()) {
             svgImageSize = renderer.boundsOnElement(imageId).size().toSize();
         } else if (svgImageSize.isNull()) {
-            mWarning("SvgImageResource") << "    Invalid svg, size of id" << imageId << "is (0,0)";
+            qWarning() << Q_FUNC_INFO << "    Invalid SVG, size of the document is (0,0)";
         }
     }
 
@@ -608,7 +606,7 @@ ImageResource *MThemeImagesDirectory::findImage(const QString &imageId)
         if (!svgPaths.empty()) {
             qDebug() << "Found icon" << imageId << "from locale";
             if (svgPaths.count() > 1) {
-                mWarning("MThemeImagesDirectory") << "Found multiple svgs with candidates for id" << imageId << "Using first one: " << svgPaths;
+                qWarning() << Q_FUNC_INFO  << "Found multiple svgs with candidates for id" << imageId << "Using first one: " << svgPaths;
             }
             resource = new SvgImageResource(imageId, svgPaths.first());
             localizedImageResources.insert(imageId, resource);
@@ -624,7 +622,7 @@ ImageResource *MThemeImagesDirectory::findImage(const QString &imageId)
         QList<QString> svgPaths = idsInSvgImages.values(imageId);
         if (!svgPaths.empty()) {
             if (svgPaths.count() > 1) {
-                mWarning("MThemeImagesDirectory") << "Found multiple svgs with candidates for id" << imageId << "Using first one: " << svgPaths;
+                qWarning() << Q_FUNC_INFO  << "Found multiple svgs with candidates for id" << imageId << "Using first one: " << svgPaths;
             }
             resource = new SvgImageResource(imageId, svgPaths.first());
             imageResources.insert(imageId, resource);
@@ -694,7 +692,7 @@ void MThemeImagesDirectory::reloadLocalizedResources(const QString &locale)
                 {
                     // locale not found, and no way to shorten it, return
                     m_locale = "";
-                    mWarning("MThemeImagesDirectory")
+                    qWarning() << Q_FUNC_INFO 
                       << "Could not find locale" << m_locale << ".";
                     return;
                 }
@@ -704,7 +702,7 @@ void MThemeImagesDirectory::reloadLocalizedResources(const QString &locale)
 
     //output a warning if the original locale was truncated
     if( m_locale != locale )
-        mWarning("MThemeImagesDirectory") << "Using" << m_locale << "as locale, because no localized resources was found for" << locale;
+        qWarning() << Q_FUNC_INFO  << "Using" << m_locale << "as locale, because no localized resources was found for" << locale;
 
 #ifdef __linux__
       // remove old watches if present
@@ -802,7 +800,7 @@ void MThemeImagesDirectory::addImageResource(const QFileInfo& fileInfo, bool loc
     if( !localized ) {
         //only one image resource from the theme with a same name is allowed
         if (imageResources.contains(fileInfo.baseName())) {
-            mWarning("MThemeDaemon") << "Multiple reference of " << fileInfo.baseName()
+            qWarning() << Q_FUNC_INFO 
                                      << "Using " << imageResources.value(fileInfo.baseName())->absoluteFilePath()
                                      << "instead of" << fileInfo.absoluteFilePath();
         } else {
@@ -818,7 +816,7 @@ void MThemeImagesDirectory::addImageResource(const QFileInfo& fileInfo, bool loc
     } else {
         //add localized image resource only if same named resource was found from the original theme
         if (!imageResources.contains(fileInfo.baseName()) && !idsInSvgImages.contains(fileInfo.baseName())) {
-            mWarning("MThemeDaemon") << "Ignoring localized image resource" << fileInfo.absoluteFilePath() << "because it was not found from the original theme!";
+            qWarning() << Q_FUNC_INFO  << "because it was not found from the original theme!";
         } else {
             //if "svg" add IconImageResource, if "jpg" or "png" add PixmapImageResource
             localizedImageResources.insert(fileInfo.baseName(), fileInfo.suffix() == QLatin1String("svg") ? (ImageResource*) new IconImageResource(fileInfo.absoluteFilePath()) : (ImageResource*) new PixmapImageResource(fileInfo.absoluteFilePath()));
@@ -847,7 +845,7 @@ void MThemeImagesDirectory::addSvgResource(const QFileInfo& fileInfo, bool local
             }
             saveIdsInCache(ids, fileInfo);
         } else {
-                mWarning("MThemeImagesDirectory") << "Failed to load ids from" << fileInfo.absoluteFilePath();
+                qWarning() << Q_FUNC_INFO ;
         }
     }
 }
@@ -881,7 +879,7 @@ bool MThemeImagesDirectory::loadIdsFromCache(const QFileInfo& svgFileInfo, bool 
             file.close();
             return true;
         } else {
-            mWarning("MThemeImagesDirectory") << "Failed to load id cache file" << idCacheFile;
+            qWarning() << Q_FUNC_INFO  << "Failed to load id cache file" << idCacheFile;
         }
         return false;
     }
@@ -897,7 +895,7 @@ void MThemeImagesDirectory::saveIdsInCache(const QStringList& ids, const QFileIn
         //Maybe it failed because the directory doesn't exist
         QDir().mkpath(QFileInfo(idCacheFile).absolutePath());
         if (!file.open(QFile::WriteOnly)) {
-            mDebug("MThemeImagesDirectory") << "Failed to save id cache file" << svgFileInfo.fileName() << "to" << idCacheFile;
+            qDebug() << Q_FUNC_INFO  << "to" << idCacheFile;
             return;
         }
     }
@@ -927,7 +925,7 @@ void MThemeImagesDirectory::addImageResource(const char *path, const char *filen
     if( !localized ) {
         //only one image resource from the theme with a same name is allowed
         if (imageResources.contains(bn)) {
-            mWarning("MThemeDaemon") << "Multiple reference of " << bn
+            qWarning() << Q_FUNC_INFO  << "Multiple reference of " << bn
                                      << "Using " << imageResources.value(bn)->absoluteFilePath()
                                      << "instead of" << path;
         } else {
@@ -944,7 +942,7 @@ void MThemeImagesDirectory::addImageResource(const char *path, const char *filen
     else {
         //add localized image resource only if same named resource was found from the original theme
         if (!imageResources.contains(bn) && !idsInSvgImages.contains(bn)) {
-            mWarning("MThemeDaemon") << "Ignoring localized image resource" << path << "because it was not found from the original theme!";
+            qWarning() << Q_FUNC_INFO  << "Ignoring localized image resource" << path << "because it was not found from the original theme!";
         } else {
             //if "svg" add IconImageResource, if "jpg" or "png" add PixmapImageResource
             localizedImageResources.insert(bn, !strcasecmp(dot+1, "svg") ? (ImageResource*) new IconImageResource(path) : (ImageResource*) new PixmapImageResource(path));
@@ -976,7 +974,7 @@ void MThemeImagesDirectory::addSvgResource(const char *path, bool localized)
             }
             saveIdsInCache(ids, path);
         } else {
-                mWarning("MThemeImagesDirectory") << "Failed to load ids from" << path;
+                qWarning() << Q_FUNC_INFO  << "Failed to load ids from" << path;
         }
     }
 }
@@ -1195,7 +1193,7 @@ bool MThemeImagesDirectory::loadIdsFromCache(const char *path, bool localized)
             file.close();
             return true;
         } else {
-            mWarning("MThemeImagesDirectory") << "Failed to load id cache file" << idCacheFile;
+            qWarning() << Q_FUNC_INFO  << "Failed to load id cache file" << idCacheFile;
         }
         return false;
     }
@@ -1215,7 +1213,7 @@ void MThemeImagesDirectory::saveIdsInCache(const QStringList& ids, const char *p
         //Maybe it failed because the directory doesn't exist
         QDir().mkpath(QFileInfo(idCacheFile).absolutePath());
         if (!file.open(QFile::WriteOnly)) {
-            mDebug("MThemeImagesDirectory") << "Failed to save id cache file" << path << "to" << idCacheFile;
+            qDebug() << Q_FUNC_INFO  << "Failed to save id cache file" << path << "to" << idCacheFile;
             return;
         }
     }
@@ -1245,7 +1243,7 @@ MImageDirectory::MImageDirectory(const QString &path, M::RecursionMode recursion
     while (!directories.isEmpty()) {
         QDir dir = directories.takeFirst();
         if (!dir.exists()) {
-            mWarning("MThemeDaemon") << "directory" << dir.absolutePath() << "does not exist!";
+            qWarning() << Q_FUNC_INFO  << "does not exist!";
             continue;
         }
 
@@ -1259,7 +1257,7 @@ MImageDirectory::MImageDirectory(const QString &path, M::RecursionMode recursion
                 directories.append(QDir(i->absoluteFilePath()));
             } else if (i->suffix() == QLatin1String("png") || i->suffix() == QLatin1String("jpg")) {
                 if (imageResources.contains(i->baseName())) {
-                    mDebug("MThemeDaemon") << "Path" << path << "contains multiple images with id" << i->baseName();
+                    qDebug() << Q_FUNC_INFO ;
                 } else {
                     imageResources.insert(i->baseName(), new PixmapImageResource(i->absoluteFilePath()));
                 }

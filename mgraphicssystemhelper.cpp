@@ -36,10 +36,8 @@ namespace DirtyLogger
 
 #include "mgraphicssystemhelper.h"
 
-#include "mwindow.h"
-#include "../theme/mimagedirectory.h"
-#include "../theme/mpixmaphandle.h"
-#include "mdebug.h"
+#include "mimagedirectory.h"
+#include "mpixmaphandle.h"
 
 #ifdef QT_OPENGL_LIB
 #include <QGLFormat>

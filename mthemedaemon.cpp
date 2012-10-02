@@ -20,7 +20,6 @@
 #include "mthemedaemon.h"
 
 #include <QSvgRenderer>
-#include <MDebug>
 #include <QPixmap>
 #include <QDir>
 #include <QSettings>
@@ -83,7 +82,7 @@ QString MThemeDaemon::systemThemeDirectory()
     appDir.cd("themes");
     return appDir.absolutePath();
 #else
-    return THEMEDIR;
+    return "/usr/share/themes";
 #endif
 }
 
@@ -112,7 +111,7 @@ bool MThemeDaemon::pixmap(MThemeDaemonClient *client, const PixmapIdentifier &id
 {
     // has the client already requested this pixmap?
     if (client->pixmaps.contains(id)) {
-        mWarning("MThemeDaemon") << "    The requested pixmap" << id.imageId << "is already loaded for the client" << client->name();
+        qWarning() << Q_FUNC_INFO << "    The requested pixmap" << id.imageId << "is already loaded for the client" << client->name();
         return false;
     }
 
@@ -122,7 +121,7 @@ bool MThemeDaemon::pixmap(MThemeDaemonClient *client, const PixmapIdentifier &id
         // application paths didn't contain the image resource, now check from theme
         resource = findImageResource(id.imageId);
         if (!resource) {
-            mWarning("MThemeDaemon") << "    The requested pixmap" << id.imageId << "was not found for client" << client->name();
+            qWarning() << Q_FUNC_INFO << "    The requested pixmap" << id.imageId << "was not found for client" << client->name();
             client->pixmaps.insert(id, NULL);
             *handle = MPixmapHandle();
             return true;
@@ -131,7 +130,7 @@ bool MThemeDaemon::pixmap(MThemeDaemonClient *client, const PixmapIdentifier &id
         }
     }
     if (printGraphicalFiles) {
-        mWarning("MThemeDaemon") << qPrintable(QString("%1: ID: %2 file: %3").arg(client->name()).arg(id.imageId).arg(resource->absoluteFilePath()));
+        qWarning() << Q_FUNC_INFO << qPrintable(QString("%1: ID: %2 file: %3").arg(client->name()).arg(id.imageId).arg(resource->absoluteFilePath()));
     }
 
     // save the information that this client has a reference of this pixmap
@@ -147,7 +146,7 @@ bool MThemeDaemon::releasePixmap(MThemeDaemonClient *client, const PixmapIdentif
     QHash<PixmapIdentifier, ImageResource *>::iterator i = client->pixmaps.find(id);
     if (i == client->pixmaps.end()) {
         // the client has no reference to this pixmap
-        mWarning("MThemeDaemon") << "    Pixmap" << id.imageId << "was not loaded by the client" << client->name();
+        qWarning() << Q_FUNC_INFO << "    Pixmap" << id.imageId << "was not loaded by the client" << client->name();
         return false;
     }
 
@@ -267,12 +266,12 @@ bool MThemeDaemon::activateTheme(const QString &newTheme, const QString &locale,
 
     QDir dir(systemThemeDirectory() + QDir::separator() + newTheme);
     if (!dir.exists()) {
-        mWarning("MThemeDaemon") << "Theme" << newTheme << "does not exist! Not changing theme";
+        qWarning() << Q_FUNC_INFO << "Theme" << newTheme << "does not exist! Not changing theme";
         return false;
     }
 
 #ifdef MTHEME_PRINT_DEBUG
-    mDebug("MThemeDaemon") << "Changing theme from" << currentThemeName << "to" << newTheme;
+    qDebug() << Q_FUNC_INFO << "Changing theme from" << currentThemeName << "to" << newTheme;
 #endif
 
     // Change the theme
@@ -323,7 +322,7 @@ bool MThemeDaemon::activateTheme(const QString &newTheme, const QString &locale,
         // check that there is no cyclic dependencies
         foreach(const QString & themeName, newThemeInheritanceChain) {
             if (tmpTheme == themeName) {
-                mWarning("MThemeDaemon") << "Cyclic dependency in theme:" << newTheme;
+                qWarning() << Q_FUNC_INFO << "Cyclic dependency in theme:" << newTheme;
                 return false;
             }
         }
@@ -334,10 +333,10 @@ bool MThemeDaemon::activateTheme(const QString &newTheme, const QString &locale,
 
     QString linkToCurrentTheme = MThemeDaemon::systemThemeCacheDirectory() + QDir::separator() + "currentTheme";
     QFile::remove(linkToCurrentTheme);
-    QFile::link(QString(THEMEDIR) + QDir::separator() + themeInheritance.first(), linkToCurrentTheme);
+    QFile::link(QString("/usr/share/themes") + QDir::separator() + themeInheritance.first(), linkToCurrentTheme);
 
 #ifdef MTHEME_PRINT_DEBUG
-    mDebug("MThemeDaemon") << "    New theme inheritance chain is" << themeInheritance;
+    qDebug() << Q_FUNC_INFO << "    New theme inheritance chain is" << themeInheritance;
 #endif
 
     // include the path to theme inheritance chain
