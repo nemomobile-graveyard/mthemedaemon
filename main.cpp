@@ -28,8 +28,6 @@
 #include "keypresswaiter.h"
 #endif
 
-#include "sharepixmapsmessage.h"
-
 namespace
 {
     QtMsgType outputLevel = QtDebugMsg;
@@ -115,9 +113,6 @@ int main(int argc, char **argv)
 #endif // HAVE_MEEGOGRAPHICSSYSTEM
 
     QApplication app(argc, argv);
-
-    if (!sendSharePixmapsMessage())
-        mWarning("mthemedaemon") << "can't send pixmap sharing message";
 
     outputLevel = getOutputLevelFromArgs(app.arguments());
     qInstallMsgHandler(mMessageHandler);
