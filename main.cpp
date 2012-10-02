@@ -22,8 +22,6 @@
 #include <QApplication>
 #include <signal.h>
 
-#include <MDebug>
-
 #ifdef CLOSE_ON_ENTER
 #include "keypresswaiter.h"
 #endif

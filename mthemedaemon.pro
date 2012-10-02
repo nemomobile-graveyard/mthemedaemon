@@ -1,13 +1,3 @@
-include(../mkspecs/common.pri)
-
-INCLUDEPATH += \
-    . \
-    ../src/include \
-    ../src/corelib \
-    ../src/corelib/core \
-
-DEPENDPATH += $$INCLUDEPATH
-QMAKE_LIBDIR += ../lib
 TEMPLATE = app
 DEPENDPATH += .
 
@@ -30,48 +20,46 @@ DEFINES += QT_STRICT_ITERATORS
 !win32:CONFIG += link_pkgconfig
 PKGCONFIG += gobject-2.0
 PKGCONFIG += x11
+PKGCONFIG += mlite
 
 # Input
 SOURCES += main.cpp \
            mthemedaemonserver.cpp \
-           ../src/corelib/theme/mthemedaemon.cpp \
-           ../src/corelib/theme/mcommonpixmaps.cpp \
-           ../src/corelib/theme/mimagedirectory.cpp \
-           ../src/corelib/theme/mthemedaemonclient.cpp \
-           ../src/corelib/theme/mpixmaphandle.cpp \
-           ../src/corelib/theme/mthemedaemonprotocol.cpp \
-           ../src/corelib/core/mcpumonitor.cpp \
-           ../src/corelib/core/mgraphicssystemhelper.cpp \
-           ../src/corelib/core/msystemdirectories.cpp
-
-linux-g++-maemo {
-    SOURCES += ../src/corelib/theme/inotifywrapper/inotify.cpp \
-               ../src/corelib/theme/inotifywrapper/inotify.watch.cpp \
-               ../src/corelib/theme/inotifywrapper/fstreenode.cpp \
-               ../src/corelib/theme/inotifywrapper/utils.cpp
-}
-
-PKGCONFIG += mlite
+           mthemedaemon.cpp \
+           mcommonpixmaps.cpp \
+           mimagedirectory.cpp \
+           mthemedaemonclient.cpp \
+           mpixmaphandle.cpp \
+           mthemedaemonprotocol.cpp \
+           mcpumonitor.cpp \
+           mgraphicssystemhelper.cpp \
+           msystemdirectories.cpp
 
 HEADERS += \
            mthemedaemonserver.h \
-           ../src/corelib/theme/mthemedaemon.h \
-           ../src/corelib/theme/mcommonpixmaps.h \
-           ../src/corelib/theme/mimagedirectory.h \
-           ../src/corelib/theme/mpixmaphandle.h \
-           ../src/corelib/theme/mthemedaemonclient.h \
-           ../src/corelib/theme/mthemedaemonprotocol.h \
-           ../src/corelib/core/mgconfitem.h \
-           ../src/corelib/core/mcpumonitor.h \
-           ../src/corelib/core/mgraphicssystemhelper.h \
-           ../src/corelib/core/msystemdirectories.h \
+           mthemedaemon.h \
+           mcommonpixmaps.h \
+           mimagedirectory.h \
+           mpixmaphandle.h \
+           mthemedaemonclient.h \
+           mthemedaemonprotocol.h \
+           mcpumonitor.h \
+           mgraphicssystemhelper.h \
+           msystemdirectories.h \
            keypresswaiter.h
 
+# TODO: this stuff needs investigation and possibly removing
 linux-g++-maemo {
     HEADERS += ../src/corelib/theme/inotifywrapper/inotify.h \
                ../src/corelib/theme/inotifywrapper/inotify.watch.h \
                ../src/corelib/theme/inotifywrapper/fstreenode.h \
                ../src/corelib/theme/inotifywrapper/utils.h
+    SOURCES += ../src/corelib/theme/inotifywrapper/inotify.cpp \
+               ../src/corelib/theme/inotifywrapper/inotify.watch.cpp \
+               ../src/corelib/theme/inotifywrapper/fstreenode.cpp \
+               ../src/corelib/theme/inotifywrapper/utils.cpp
+
+    DEFINES += STRANGE_INOTIFY_STUFF
 }
 
 QMAKE_EXTRA_TARGETS += check
