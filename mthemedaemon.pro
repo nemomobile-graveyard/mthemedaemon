@@ -48,18 +48,15 @@ HEADERS += \
            msystemdirectories.h \
            keypresswaiter.h
 
-# TODO: this stuff needs investigation and possibly removing
-linux-g++-maemo {
-    HEADERS += ../src/corelib/theme/inotifywrapper/inotify.h \
-               ../src/corelib/theme/inotifywrapper/inotify.watch.h \
-               ../src/corelib/theme/inotifywrapper/fstreenode.h \
-               ../src/corelib/theme/inotifywrapper/utils.h
-    SOURCES += ../src/corelib/theme/inotifywrapper/inotify.cpp \
-               ../src/corelib/theme/inotifywrapper/inotify.watch.cpp \
-               ../src/corelib/theme/inotifywrapper/fstreenode.cpp \
-               ../src/corelib/theme/inotifywrapper/utils.cpp
-
-    DEFINES += STRANGE_INOTIFY_STUFF
+linux {
+    HEADERS += inotify.h \
+               inotify.watch.h \
+               fstreenode.h \
+               utils.h
+    SOURCES += inotify.cpp \
+               inotify.watch.cpp \
+               fstreenode.cpp \
+               utils.cpp
 }
 
 QMAKE_EXTRA_TARGETS += check

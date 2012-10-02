@@ -32,7 +32,6 @@
 #include <QSize>
 #include <QImage>
 #include <QColor>
-#include <mnamespace.h>
 #include <QDebug>
 #include <QObject>
 
@@ -47,7 +46,7 @@ class QFile;
 
 
 #ifndef NOIMAGEDIRECTORIES
-#include "inotifywrapper/inotify.h"
+#include "inotify.h"
 #endif
 
 
@@ -292,8 +291,15 @@ private slots:
 class MImageDirectory
 {
 public:
+    /*!
+     * Defines whether directories should be traversed recursively.
+     */
+    enum RecursionMode {
+        Recursive,
+        NonRecursive
+    };
 
-    MImageDirectory(const QString &path, M::RecursionMode recursionMode);
+    MImageDirectory(const QString &path, RecursionMode recursionMode);
 
     ~MImageDirectory();
 

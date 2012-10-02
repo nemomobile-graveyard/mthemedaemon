@@ -69,10 +69,10 @@
 #include <sys/inotify.h>  // flags are defined here
 
   // TODO: figure where to put these
-#include "inotifywrapper/inotify.h"
-#include "inotifywrapper/inotify.watch.h"
+#include "inotify.h"
+#include "inotify.watch.h"
 
-#include "inotifywrapper/utils.h"
+#include "utils.h"
 #endif
 
 
