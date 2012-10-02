@@ -51,12 +51,7 @@ linux-g++-maemo {
                ../src/corelib/theme/inotifywrapper/utils.cpp
 }
 
-contains(DEFINES, HAVE_GCONF) {
-    PKGCONFIG += gconf-2.0
-    SOURCES += ../src/corelib/core/mgconfitem.cpp
-} else {
-    SOURCES += ../src/corelib/core/mgconfitem_stub.cpp
-}
+PKGCONFIG += mlite
 
 HEADERS += \
            mthemedaemonserver.h \
@@ -87,5 +82,5 @@ QMAKE_EXTRA_TARGETS += check-xml
 check-xml.depends = $$TARGET
 check-xml.commands = $$system(true)
 
-target.path = $$M_INSTALL_BIN
-INSTALLS += target \
+target.path = /usr/bin
+INSTALLS += target
