@@ -33,7 +33,8 @@ SOURCES += main.cpp \
            mthemedaemonprotocol.cpp \
            mcpumonitor.cpp \
            mgraphicssystemhelper.cpp \
-           msystemdirectories.cpp
+           msystemdirectories.cpp \
+           logger.cpp
 
 HEADERS += \
            mthemedaemonserver.h \
@@ -46,7 +47,8 @@ HEADERS += \
            mcpumonitor.h \
            mgraphicssystemhelper.h \
            msystemdirectories.h \
-           keypresswaiter.h
+           keypresswaiter.h \
+           logger.h
 
 linux* {
     HEADERS += inotify.h \

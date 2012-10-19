@@ -19,9 +19,12 @@
 #include "keypresswaiter.h"
 #endif
 
+#include "logger.h"
+
 namespace
 {
     QtMsgType outputLevel = QtDebugMsg;
+    Logger logger;
 }
 
 static int setup_unix_signal_handlers()
@@ -65,6 +68,12 @@ static QtMsgType getOutputLevelFromArgs(QStringList arguments)
     int index = arguments.indexOf("-output-level") + 1;
     if (index > 0 && index < arguments.length()) {
         argLevel = arguments[index];
+        logger.setLogLevel(argLevel);
+    }
+
+    index = arguments.indexOf("-log-path") + 1;
+    if (index > 0 && index < arguments.length()) {
+        logger.setLogPath(arguments[index]);
     }
 
     if (argLevel == "debug")
@@ -83,10 +92,12 @@ static QtMsgType getOutputLevelFromArgs(QStringList arguments)
 
 static void mMessageHandler(QtMsgType type, const char *msg)
 {
+    logger.log(type, QString(msg));
+
     if (type < outputLevel)
         return;
 
-   fprintf(stderr, "%s\n", msg);
+    fprintf(stderr, "%s\n", msg);
 
    if (type == QtFatalMsg)
        abort();
