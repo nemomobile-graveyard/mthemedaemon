@@ -114,7 +114,7 @@ bool MThemeDaemon::pixmap(MThemeDaemonClient *client, const PixmapIdentifier &id
         // application paths didn't contain the image resource, now check from theme
         resource = findImageResource(id.imageId);
         if (!resource) {
-            qWarning() << Q_FUNC_INFO << "    The requested pixmap" << id.imageId << "was not found for client" << client->name();
+            qWarning() << Q_FUNC_INFO << "[MISS]    The requested pixmap" << id.imageId << "was not found for client" << client->name();
             client->pixmaps.insert(id, NULL);
             *handle = MPixmapHandle();
             return true;

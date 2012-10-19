@@ -599,7 +599,7 @@ ImageResource *MThemeImagesDirectory::findImage(const QString &imageId)
         if (!svgPaths.empty()) {
             qDebug() << "Found icon" << imageId << "from locale";
             if (svgPaths.count() > 1) {
-                qWarning() << Q_FUNC_INFO  << "Found multiple svgs with candidates for id" << imageId << "Using first one: " << svgPaths;
+                qWarning() << Q_FUNC_INFO << "[MULT] Found multiple svgs with candidates for id" << imageId << svgPaths << "Using first one: " << svgPaths.first();
             }
             resource = new SvgImageResource(imageId, svgPaths.first());
             localizedImageResources.insert(imageId, resource);
@@ -615,7 +615,7 @@ ImageResource *MThemeImagesDirectory::findImage(const QString &imageId)
         QList<QString> svgPaths = idsInSvgImages.values(imageId);
         if (!svgPaths.empty()) {
             if (svgPaths.count() > 1) {
-                qWarning() << Q_FUNC_INFO  << "Found multiple svgs with candidates for id" << imageId << "Using first one: " << svgPaths;
+                qWarning() << Q_FUNC_INFO << "[MULT] Found multiple svgs with candidates for id" << imageId << svgPaths << "Using first one: " << svgPaths.first();
             }
             resource = new SvgImageResource(imageId, svgPaths.first());
             imageResources.insert(imageId, resource);
