@@ -70,3 +70,8 @@ check-xml.commands = $$system(true)
 
 target.path = /usr/bin
 INSTALLS += target
+
+themedaemonpriorities.files = themedaemonpriorities.conf
+themedaemonpriorities.path = /etc/meegotouch
+INSTALLS += themedaemonpriorities
+
