@@ -213,7 +213,9 @@ void MThemeDaemonServer::clientDataAvailable()
         stream.setVersion(QDataStream::Qt_4_6);
 
         // loop as long as the socket has some data left
-        while (socket->bytesAvailable()) {
+        // we must have at least a 32bit integer here, otherwise Packet's stream
+        // operator won't touch it, and we'll loop endlessly.
+        while (socket->bytesAvailable() >= sizeof(quint32)) {
             Packet packet;
             stream >> packet;
 
@@ -255,7 +257,9 @@ void MThemeDaemonServer::clientDataAvailable()
     }
 
     // client has registered, so we'll read all packets that are currently available from the socket
-    while (socket->bytesAvailable()) {
+    // we must have at least a 32bit integer here, otherwise Packet's stream
+    // operator won't touch it, and we'll loop endlessly.
+    while (socket->bytesAvailable() >= sizeof(quint32)) {
 
         // read packet from socket
         Packet packet;
