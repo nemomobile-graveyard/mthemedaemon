@@ -34,7 +34,7 @@ QString MSystemDirectories::cacheDirectory()
         cacheDir = cacheDirPrefix;
 
         // first check if we can write to the cache dir
-        cacheDir += "/var/cache/meegotouch";
+        cacheDir += "/var/cache/meegotouch/";
         QDir().mkpath(cacheDir);
         QFileInfo cacheDirInfo(cacheDir);
         if (!(cacheDirInfo.isWritable() && cacheDirInfo.isDir()))
