@@ -20,6 +20,7 @@ DEFINES += QT_STRICT_ITERATORS
 !win32:CONFIG += link_pkgconfig
 PKGCONFIG += x11
 PKGCONFIG += mlite
+PKGCONFIG += libsystemd-daemon
 
 # Input
 SOURCES += main.cpp \

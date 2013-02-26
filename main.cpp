@@ -14,6 +14,7 @@
 #include <QDebug>
 #include <QApplication>
 #include <signal.h>
+#include <systemd/sd-daemon.h>
 
 #ifdef CLOSE_ON_ENTER
 #include "keypresswaiter.h"
@@ -133,6 +134,11 @@ int main(int argc, char **argv)
     QObject::connect(&keyWaiter, SIGNAL(finished()), qApp, SLOT(quit()));
     keyWaiter.start();
 #endif
+
+    /* Notify systemd if requested */
+    if (app.arguments().indexOf("-systemd") >= 0) {
+        sd_notify(0, "READY=1");
+    }
 
     if (app.arguments().indexOf("-quitimmediately") >= 0) {
         QTimer::singleShot(0, &app, SLOT(quit()));
