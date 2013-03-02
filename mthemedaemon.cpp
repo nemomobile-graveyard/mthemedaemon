@@ -41,10 +41,10 @@ MThemeDaemon::MThemeDaemon(Type type) :
 {
     // check that the base theme ("fallback") directory exists.
     QDir baseThemeDir(systemThemeDirectory() + QDir::separator() + "base" + QDir::separator() +
-                      "meegotouch" + QDir::separator() + "libmeegotouchcore" + QDir::separator() + "style");
+                      "meegotouch" + QDir::separator() + "icons");
     if (!baseThemeDir.exists()) {
         // we don't have the base theme ("fallback") directory, so exit!
-        qFatal("MThemeDaemon - base theme directory not found: %s. Please (re)install meegotouchtheme package.",
+        qFatal("MThemeDaemon: base theme not found: %s. Please install a base theme package (like nemo-theme-default)",
                qPrintable(baseThemeDir.absolutePath()));
     }
 }
