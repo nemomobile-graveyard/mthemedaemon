@@ -1,0 +1,22 @@
+* Mon Mar 04 2013 Robin Burchell <robin+mer@viroteck.net> - 1.0.3
+- Don't check for meegotouch CSS directory, check for base theme icons instead
+  Not everything uses libmeegotouch (and thus meegotouch-theme), so the CSS
+  directory may not exist.
+
+* Tue Feb 26 2013 Pekka Lundstrom <pekka.lundstrom@jollamobile.com> - 1.0.2
+- Added feedback to systemd when initialization is ready. Fixes NEMO#636
+
+* Fri Feb 22 2013 Pekka Lundstrom <pekka.lundstrom@jollamobile.com> - 1.0.1
+- systemd service file changed so that we can start this before xorg.target if
+  required. Now this needs only xorg.service, not full xorg.target
+
+* Tue Oct 30 2012 Robin Burchell <robin+mer@viroteck.net> - 1.0.1
+- Fix an infinite loop due to incorrect handling of partial reads
+- Fix cache writing handling
+
+* Tue Oct 30 2012 Robin Burchell <robin+mer@viroteck.net> - 1.0.0
+- Ensure mthemedaemon service restarts
+
+* Mon Oct 29 2012 Robin Burchell <robin+mer@viroteck.net> - 1.0.0
+- Initial packaging, split out from libmeegotouch.
+- Remove libmeegotouch dependency.

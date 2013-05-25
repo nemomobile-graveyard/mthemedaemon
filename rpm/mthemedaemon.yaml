@@ -1,0 +1,29 @@
+Name: mthemedaemon
+Summary: Shared theme resource loader
+Version: 1.0.3
+Release: 1
+Group: System/Libraries
+License: LGPLv2.1
+URL: https://github.com/nemomobile/mthemedaemon
+Sources:
+    - "%{name}-%{version}.tar.bz2"
+Description: |
+    Daemon for sharing theme pixmaps
+Requires:
+    - nemo-theme-default
+PkgConfigBR:
+    - QtOpenGL
+    - mlite
+    - systemd
+Configure: none
+Builder: qmake
+ExtraSources:
+    - mthemedaemon.desktop;%{_sysconfdir}/xdg/autostart
+    - mthemedaemon.service;%{_libdir}/systemd/user/
+RunFdupes:
+    - "%{_datadir}"
+Files:
+    - "%{_bindir}/mthemedaemon"
+    - "%{_libdir}/systemd/user/mthemedaemon.service"
+    - "%{_sysconfdir}/xdg/autostart/mthemedaemon.desktop"
+    - "%{_sysconfdir}/meegotouch/themedaemonpriorities.conf"
