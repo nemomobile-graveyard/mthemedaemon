@@ -82,10 +82,10 @@ fi
 # >> postun
 if [ -d /var/cache/meegotouch ]; then
 rm -rf /var/cache/meegotouch 
+fi
 if [ "$1" -eq 0 ]; then
 systemctl-user stop mthemedaemon.service || :
 systemctl-user daemon-reload || :
-fi
 fi
 # << postun
 
