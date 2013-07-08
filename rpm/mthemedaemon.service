@@ -1,7 +1,7 @@
 [Unit]
 Description=The MTF theme daemon
-After=pre-user-session.target
-Requires=dbus.socket
+After=pre-user-session.target xorg.service
+Requires=dbus.socket xorg.service
 
 [Service]
 Type=notify
