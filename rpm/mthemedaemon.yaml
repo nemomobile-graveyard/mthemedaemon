@@ -11,6 +11,8 @@ Description: |
     Daemon for sharing theme pixmaps
 Requires:
     - nemo-theme-default
+    - systemd
+    - systemd-user-session-targets 
 PkgConfigBR:
     - QtOpenGL
     - mlite
