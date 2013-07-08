@@ -61,6 +61,7 @@ cp -a %{SOURCE2} %{buildroot}%{_libdir}/systemd/user/
 
 # >> install post
 # Create the mthemedaemon cache directory
+mkdir -p %{buildroot}/var/cache/meegotouch
 mkdir -p %{buildroot}%{_libdir}/systemd/user/user-session.target.wants
 ln -s ../mthemedaemon.service %{buildroot}%{_libdir}/systemd/user/user-session.target.wants/
 # << install post
@@ -79,6 +80,8 @@ fi
 %postun
 /sbin/ldconfig
 # >> postun
+if [ -d /var/cache/meegotouch ]; then
+rm -rf /var/cache/meegotouch 
 if [ "$1" -eq 0 ]; then
 systemctl-user stop mthemedaemon.service || :
 systemctl-user daemon-reload || :
@@ -93,6 +96,7 @@ fi
 %{_sysconfdir}/xdg/autostart/mthemedaemon.desktop
 %{_sysconfdir}/meegotouch/themedaemonpriorities.conf
 # >> files
+%attr(1777, -, -) /var/cache/meegotouch
 %{_libdir}/systemd/user/user-session.target.wants/mthemedaemon.service
 # << files
 
