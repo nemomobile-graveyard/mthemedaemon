@@ -86,6 +86,7 @@ if [ "$1" -eq 0 ]; then
 systemctl-user stop mthemedaemon.service || :
 systemctl-user daemon-reload || :
 fi
+fi
 # << postun
 
 
